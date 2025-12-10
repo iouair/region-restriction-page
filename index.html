@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>访问区域限制 | 美好的明天</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            background-color: #f9fafb;
+            color: #1f2937;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .bg-decoration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .bg-blob-1, .bg-blob-2 {
+            position: absolute;
+            width: 28rem;
+            height: 28rem;
+            border-radius: 50%;
+            filter: blur(72px);
+            opacity: 0.08;
+            transition: all 0.5s ease;
+        }
+
+        .bg-blob-1 {
+            top: -12rem;
+            right: -12rem;
+            background-color: #3b82f6;
+        }
+
+        .bg-blob-2 {
+            bottom: -12rem;
+            left: -12rem;
+            background-color: #8b5cf6;
+        }
+
+        body:hover .bg-blob-1 {
+            transform: translate(8px, -8px);
+        }
+
+        body:hover .bg-blob-2 {
+            transform: translate(-8px, 8px);
+        }
+
+        .main-container {
+            max-width: 40rem;
+            width: 100%;
+            background-color: #fff;
+            border-radius: 1.25rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);
+            padding: 2rem 1.5rem;
+            transition: all 0.4s ease;
+            animation: float 8s ease-in-out infinite;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+
+        .main-container:hover {
+            box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.12);
+            transform: translateY(-4px);
+        }
+
+        .main-title {
+            font-size: clamp(2rem, 5vw, 2.8rem);
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: #1f2937;
+            padding-top: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .desc-text {
+            color: #4b5563;
+            text-align: center;
+            line-height: 1.8;
+            margin-bottom: 2.5rem;
+            font-size: 1.05rem;
+        }
+
+        .desc-text .highlight {
+            color: #3b82f6;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .tips-box {
+            background-color: #f0f9ff;
+            border-left: 4px solid #3b82f6;
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            margin-bottom: 2.5rem;
+            line-height: 1.8;
+            color: #374151;
+            transition: all 0.3s ease;
+        }
+
+        .tips-box:hover {
+            background-color: #eff6ff;
+            transform: translateX(4px);
+        }
+
+        .tips-box strong {
+            color: #1e40af;
+            font-size: 1.05rem;
+        }
+
+        .contact-section {
+            border-top: 1px solid #f3f4f6;
+            padding-top: 2rem;
+            text-align: center;
+        }
+
+        .contact-desc {
+            color: #6b7280;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .contact-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            align-items: center;
+            position: relative;
+        }
+
+        .contact-link {
+            color: #3b82f6;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+        }
+
+        .contact-link:hover {
+            color: #8b5cf6;
+            background-color: #f9fafb;
+        }
+
+        .hover-bubble {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .bubble-box {
+            position: absolute;
+            bottom: 120%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 999;
+            border-radius: 0.75rem;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            padding: 0.75rem;
+            background: #fff;
+            border: 1px solid #f3f4f6;
+        }
+
+        .bubble-box img {
+            width: 180px;
+            height: auto;
+            object-fit: cover;
+            border-radius: 0.5rem;
+            display: block;
+            transition: all 0.2s ease;
+        }
+
+        .hover-bubble:hover .bubble-box {
+            opacity: 1;
+            visibility: visible;
+            bottom: 110%;
+        }
+
+        .hover-bubble:hover .bubble-box img {
+            transform: scale(1.02);
+        }
+
+        .copyright {
+            text-align: center;
+            margin-top: 2.5rem;
+            font-size: 0.8rem;
+            color: #9ca3af;
+            letter-spacing: 0.02em;
+        }
+
+        .icp-info {
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.75rem;
+            color: #9ca3af;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+
+        .icp-info a {
+            color: #9ca3af;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+        }
+
+        .icp-info a:hover {
+            color: #3b82f6;
+            background-color: #f9fafb;
+        }
+
+        .refresh-tip {
+            text-align: center;
+            color: #6b7280;
+            font-size: 0.9rem;
+            margin-top: 1.25rem;
+        }
+
+        .refresh-tip a {
+            color: #3b82f6;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .refresh-tip a:hover {
+            color: #8b5cf6;
+            text-decoration: underline;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-12px);
+            }
+        }
+
+        @media (min-width: 640px) {
+            body {
+                padding: 1.5rem;
+            }
+            .main-container {
+                padding: 2.5rem 2rem;
+            }
+            .bubble-box img {
+                width: 220px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            body {
+                padding: 2rem;
+            }
+            .bubble-box img {
+                width: 250px;
+            }
+        }
+
+        .lang-switch {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .lang-btn {
+            padding: 6px 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            background-color: #fff;
+            color: #4b5563;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.85rem;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .lang-btn:hover {
+            background-color: #f9fafb;
+            color: #3b82f6;
+            border-color: #3b82f6;
+        }
+
+        .lang-btn.active {
+            background-color: #3b82f6;
+            color: #fff;
+            border-color: #3b82f6;
+        }
+
+        .lang-btn.active:hover {
+            background-color: #2563eb;
+        }
+
+        @media (max-width: 640px) {
+            .lang-switch {
+                top: 10px;
+                right: 10px;
+                gap: 6px;
+            }
+            .lang-btn {
+                padding: 5px 10px;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="lang-switch">
+        <button class="lang-btn active" data-lang="zh-cn">简体中文</button>
+        <button class="lang-btn" data-lang="zh-tw">繁體中文</button>
+        <button class="lang-btn" data-lang="en">English</button>
+        <button class="lang-btn" data-lang="ja">日本語</button>
+        <button class="lang-btn" data-lang="ko">한국어</button>
+    </div>
+
+    <div class="bg-decoration">
+        <div class="bg-blob-1"></div>
+        <div class="bg-blob-2"></div>
+    </div>
+    <div class="main-container">
+        <h1 class="main-title" data-zh-cn="访问区域限制" data-zh-tw="訪問區域限制" data-en="Access Region Restriction" data-ja="アクセス地域制限" data-ko="접근 지역 제한">访问区域限制</h1>
+        
+        <p class="desc-text" data-zh-cn="本站仅对<span class='highlight'>中国大陆地区</span>用户提供服务<br>若您正在使用代理/VPN服务，请关闭后重试访问" data-zh-tw="本站僅對<span class='highlight'>中國大陸地區</span>用戶提供服務<br>若您正在使用代理/VPN服務，請關閉後重試訪問" data-en="This site only provides services to users in <span class='highlight'>Mainland China</span><br>If you are using a proxy/VPN service, please turn it off and try again" data-ja="本サイトは<span class='highlight'>中国本土地域</span>のユーザーに対してのみサービスを提供します<br>プロキシ/VPNサービスを使用中の場合は、無効にして再アクセスしてください" data-ko="본 사이트는 <span class='highlight'>중국 본토 지역</span> 사용자에게만 서비스를 제공합니다<br>프록시/VPN 서비스를 사용 중인 경우, 종료 후 다시 접속해 주십시오">
+            本站仅对<span class="highlight">中国大陆地区</span>用户提供服务<br>若您正在使用代理/VPN服务，请关闭后重试访问
+        </p>
+        
+        <div class="tips-box" data-zh-cn="<strong>温馨提示：</strong><br>1. 请检查网络设置，确保未启用任何境外代理服务<br>2. 如您身处中国大陆仍提示此信息，请清除浏览器缓存后重试<br>3. 若问题持续存在，可通过下方方式联系我核实" data-zh-tw="<strong>溫馨提示：</strong><br>1. 請檢查網路設定，確保未啟用任何境外代理服務<br>2. 如您身處中國大陸仍提示此資訊，請清除瀏覽器快取後重試<br>3. 若問題持續存在，可透過下方方式聯繫我核實" data-en="<strong>Reminder：</strong><br>1. Please check your network settings to ensure no overseas proxy services are enabled<br>2. If you are in Mainland China and still see this message, please clear your browser cache and try again<br>3. If the problem persists, contact me using the methods below to verify" data-ja="<strong>ご注意：</strong><br>1. ネットワーク設定を確認し、海外プロキシサービスが有効になっていないことを確認してください<br>2. 中国本土にいるにもかかわらずこのメッセージが表示される場合は、ブラウザのキャッシュをクリアして再試行してください<br>3. 問題が解決しない場合は、以下の方法でお問い合わせください" data-ko="<strong>유의사항：</strong><br>1. 네트워크 설정을 확인하여 해외 프록시 서비스가 활성화되지 않았는지 확인하십시오<br>2. 중국 본토에 있음에도 이 메시지가 표시되는 경우, 브라우저 캐시를 지우고 다시 시도하십시오<br>3. 문제가 계속되는 경우, 아래 방법으로 문의하여 확인하십시오">
+            <strong>温馨提示：</strong><br>1. 请检查网络设置，确保未启用任何境外代理服务<br>2. 如您身处中国大陆仍提示此信息，请清除浏览器缓存后重试<br>3. 若问题持续存在，可通过下方方式联系我核实
+        </div>
+        
+        <div class="contact-section">
+            <p class="contact-desc" data-zh-cn="如有疑问，请通过以下方式联系我" data-zh-tw="如有疑問，請透過以下方式聯繫我" data-en="If you have any questions, please contact me through the following methods" data-ja="ご質問がある場合は、以下の方法でお問い合わせください" data-ko="문의사항이 있는 경우, 아래 방법으로 연락해 주십시오">如有疑问，请通过以下方式联系我</p>
+            
+            <div class="contact-links">
+                <a href="http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=pZ2SnZOVkpSV5dTUi8bKyA" class="contact-link" title="使用邮件与我取得联系" rel="nofollow noopener noreferrer" target="_blank" data-zh-cn="邮箱" data-zh-tw="郵箱" data-en="E-mail" data-ja="メール" data-ko="이메일">邮箱</a>
+                
+                <div class="hover-bubble contact-link" data-zh-cn="QQ" data-zh-tw="QQ" data-en="QQ" data-ja="QQ" data-ko="QQ">
+                    QQ
+                    <div class="bubble-box">
+                        <img src="https://iouair.github.io/region-restriction-page/images/qq.png" alt="使用QQ与我取得联系" data-zh-cn="使用QQ与我取得联系" data-zh-tw="使用QQ與我取得聯繫" data-en="Contact me via QQ" data-ja="QQでお問い合わせください" data-ko="QQ로 연락해 주십시오">
+                    </div>
+                </div>
+                
+                <div class="hover-bubble contact-link" data-zh-cn="微信" data-zh-tw="微信" data-en="WeChat" data-ja="微信" data-ko="위챗">
+                    微信
+                    <div class="bubble-box">
+                        <img src="https://iouair.github.io/region-restriction-page/images/wechat.png" alt="使用微信与我取得联系" data-zh-cn="使用微信与我取得联系" data-zh-tw="使用微信與我取得聯繫" data-en="Contact me via WeChat" data-ja="微信でお問い合わせください" data-ko="위챗으로 연락해 주십시오">
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="refresh-tip" style="display: none;" data-zh-cn="点击 <a href='javascript:location.reload()'>这里</a> 刷新页面" data-zh-tw="點擊 <a href='javascript:location.reload()'>這裡</a> 重新整理頁面" data-en="Click <a href='javascript:location.reload()'>here</a> to refresh the page" data-ja="<a href='javascript:location.reload()'>こちら</a> をクリックしてページをリフレッシュしてください" data-ko="<a href='javascript:location.reload()'>여기</a> 를 클릭하여 페이지를 새로고침하십시오">
+            点击 <a href="javascript:location.reload()">这里</a> 刷新页面
+        </div>
+    </div>
+    
+    <div class="copyright">
+        <p>Copyright &copy; 2013 - 2025 美好的明天</p>
+    </div>
+    
+    <div class="icp-info">
+        <a href="https://beian.miit.gov.cn/" title="皖ICP备2024060589号-1" rel="nofollow noopener" target="_blank">皖ICP备2024060589号-1</a>
+        <a href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=34110202000076" title="皖公网安备34110202000076号" rel="nofollow noopener" target="_blank">皖公网安备34110202000076号</a>
+    </div>
+
+    <script>
+        const langButtons = document.querySelectorAll('.lang-btn');
+        const translatableElements = document.querySelectorAll('[data-zh-cn]');
+        
+        const langMap = {
+            'zh': 'zh-cn',
+            'zh-CN': 'zh-cn',
+            'zh-SG': 'zh-cn',
+            'zh-MY': 'zh-cn',
+            'zh-TW': 'zh-tw',
+            'zh-HK': 'zh-tw',
+            'zh-MO': 'zh-tw',
+            'ja': 'ja',
+            'ja-JP': 'ja',
+            'ko': 'ko',
+            'ko-KR': 'ko',
+            'en': 'en',
+            'en-US': 'en',
+            'en-GB': 'en'
+        };
+
+        function setLanguage(lang) {
+            langButtons.forEach(btn => {
+                if (btn.dataset.lang === lang) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+            
+            const titleMap = {
+                'zh-cn': '访问区域限制 | 美好的明天',
+                'zh-tw': '訪問區域限制 | 美好的明天',
+                'en': 'Access Region Restriction | 美好的明天',
+                'ja': 'アクセス地域制限 | 美好的明天',
+                'ko': '접근 지역 제한 | 美好的明天'
+            };
+            document.title = titleMap[lang] || titleMap['en'];
+            
+            translatableElements.forEach(el => {
+                if (el.hasAttribute('data-' + lang)) {
+                    el.innerHTML = el.getAttribute('data-' + lang);
+                }
+                
+                if (el.hasAttribute('alt') && el.hasAttribute('data-' + lang)) {
+                    el.setAttribute('alt', el.getAttribute('data-' + lang));
+                }
+                if (el.hasAttribute('title') && el.hasAttribute('data-' + lang)) {
+                    el.setAttribute('title', el.getAttribute('data-' + lang));
+                }
+            });
+        }
+
+        function detectBrowserLang() {
+            const browserLang = navigator.language || navigator.userLanguage || 'en';
+            const mainLang = browserLang.split('-')[0];
+            const targetLang = langMap[browserLang] || langMap[mainLang] || 'en';
+            setLanguage(targetLang);
+        }
+
+        detectBrowserLang();
+        
+        langButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                setLanguage(btn.dataset.lang);
+            });
+        });
+        
+        const serverTime = new Date().getTime();
+        setTimeout(() => {
+            const refreshTip = document.querySelector('.refresh-tip');
+            refreshTip.style.display = 'block';
+        }, 3000);
+    </script>
+</body>
+</html>
